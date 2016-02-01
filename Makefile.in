@@ -1,0 +1,32 @@
+.PHONY: all clean distclean realclean
+
+OCT := cl_sqlite_handler.oct
+#OBJ := cl_sqlite_handler.o
+
+MKOCTFILE  ?= mkoctfile
+MKOCTFLAGS ?= -Wall -v
+
+all: $(OBJ) $(OCT)
+
+debug : MKOCTFLAGS += -ggdb -O0
+debug : all
+
+%.o: %.cc %.h
+	$(MKOCTFILE) $(MKOCTFLAGS) -c $<
+
+#%.oct: %.cc $(OBJ)
+%.oct: %.cc
+	$(MKOCTFILE) $(MKOCTFLAGS) $^ @LIBS@ -o $@
+
+clean:
+	rm -f *.oct *.o
+	rm -f octave-core octave-workspace
+
+distclean: clean
+	rm -f Makefile
+
+realclean: clean
+	rm -f configure config.status config.log
+	rm -rf autom4te.cache
+	rm -f Makefile
+

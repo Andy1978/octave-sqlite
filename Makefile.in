@@ -17,6 +17,10 @@ debug : all
 %.oct: %.cc $(OBJ)
 	$(MKOCTFILE) $(MKOCTFLAGS) $^ @LIBS@ -o $@
 
+check: $(OCT)
+	$(MAKE) -C test
+	octave --no-gui checkit.m
+
 style:
 	# remove trailing whitespace
 	find . \( -name "*.m" -or -name "*.cc" -or -name "*.h" -or -name "Makefile" \) -exec sed -i 's/[[:space:]]*$$//' {} \;
@@ -24,6 +28,7 @@ style:
 	find . \( -name "*.cc" -or -name "*.h" \) -exec astyle --style=gnu -s2 -n {} \;
 
 clean:
+	$(MAKE) -C test $@
 	rm -f *.oct *.o
 	rm -f octave-core octave-workspace
 

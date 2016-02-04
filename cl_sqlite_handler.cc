@@ -130,24 +130,45 @@ sqlite_handler::exec_sql (string sql, Cell bind)
             }
 
           rc = sqlite3_step (pStmt);
-          cout << "sqlite3_step returned " << rc << endl;
+          //cout << "sqlite3_step returned " << rc << endl;
           if (rc == SQLITE_BUSY)
             error ("The database is busy... (locked by another app)");
           else if (rc == SQLITE_DONE)
             // sqlite3_step() has finished executing
             cout << "SQLITE_DONE" << endl;
           else if (rc == SQLITE_ROW)
-            // sqlite3_step() has another row ready
-            cout << "SQLITE_ROW" << endl;
+            {
+              // sqlite3_step() has another row ready
+              cout << "SQLITE_ROW sqlite3_column_count()=" << sqlite3_column_count(pStmt) << endl;
+
+              for (int cols=0; cols < sqlite3_column_count(pStmt); ++cols)
+                {
+                  //datatype codes https://www.sqlite.org/c3ref/c_blob.html
+                  cout << "column " << cols << " has type code " << sqlite3_column_type (pStmt, cols) << endl;
+                }
+
+              int id = sqlite3_column_int (pStmt, 0);
+              int mybool = sqlite3_column_int (pStmt, 1);
+              int myint = sqlite3_column_int (pStmt, 2);
+              string mytext = string ((const char*) sqlite3_column_text (pStmt, 3));
+              double myreal = sqlite3_column_double (pStmt, 4);
+
+              cout << "id=" << id
+                   << " mybool=" << mybool
+                   << " myint=" << myint
+                   << " mytext=" << mytext
+                   << " myreal=" << myreal << endl;
+            }
           else
             error ("sqlite_handler::exec_sql sqlite3_step failed: %i = %s", rc, sqlite3_errmsg (db));
 
-          sqlite3_reset (pStmt);
+          call reset for multiple inserts, but not for queries
+            //sqlite3_reset (pStmt);
 
-          val_idx++;
+            val_idx++;
 
-        }
-      while (val_idx < num_values || (rc == SQLITE_ROW && val_idx<10));
+      }
+    while (val_idx < num_values || (rc == SQLITE_ROW && val_idx<10));
 
       sqlite3_finalize(pStmt);
     }

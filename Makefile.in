@@ -1,7 +1,7 @@
-.PHONY: all clean distclean realclean
+.PHONY: all style clean distclean realclean
 
-OCT := cl_sqlite_handler.oct
-#OBJ := cl_sqlite_handler.o
+OCT := sqlite.oct
+OBJ := cl_sqlite_handler.o
 
 MKOCTFILE  ?= mkoctfile
 MKOCTFLAGS ?= -Wall -v
@@ -14,9 +14,14 @@ debug : all
 %.o: %.cc %.h
 	$(MKOCTFILE) $(MKOCTFLAGS) -c $<
 
-#%.oct: %.cc $(OBJ)
-%.oct: %.cc
+%.oct: %.cc $(OBJ)
 	$(MKOCTFILE) $(MKOCTFLAGS) $^ @LIBS@ -o $@
+
+style:
+	# remove trailing whitespace
+	find . \( -name "*.m" -or -name "*.cc" -or -name "*.h" -or -name "Makefile" \) -exec sed -i 's/[[:space:]]*$$//' {} \;
+	# call astyle
+	find . \( -name "*.cc" -or -name "*.h" \) -exec astyle --style=gnu -s2 -n {} \;
 
 clean:
 	rm -f *.oct *.o
@@ -25,8 +30,7 @@ clean:
 distclean: clean
 	rm -f Makefile
 
-realclean: clean
+realclean: distclean
 	rm -f configure config.status config.log
 	rm -rf autom4te.cache
-	rm -f Makefile
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2014 Andreas Weber <andy.weber.aw@gmail.com>
+// Copyright (C) 2016 Andreas Weber <andy.weber.aw@gmail.com>
 //
 // This program is free software; you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
@@ -33,12 +33,40 @@ sqlite_handler::sqlite_handler (const sqlite_handler& m)
 sqlite_handler::~sqlite_handler ()
 {
   octave_stdout << "sqlite_handler D'Tor " << endl;
+  if (db)
+    close ();
 }
 
 void
-sqlite_handler::print (std::ostream& os, bool pr_as_read_syntax = false) const
+sqlite_handler::open (string fn, bool create)
 {
-  os << "This is class sqlite_handler FOOBAR" << endl;
+
+  cout << "sqlite_handler::open " << fn << " create=" << create << endl;
+
+  int rc = sqlite3_open_v2 (fn.c_str (), &db,
+                            SQLITE_OPEN_READWRITE
+                            | ((create)? SQLITE_OPEN_CREATE : 0), NULL);
+  if( rc )
+    error ("Can't open sqlite database '%s':'%s'", fn.c_str (), sqlite3_errmsg (db));
+  this->fn = fn;
+  sqlite3_exec (db, "PRAGMA foreign_keys = ON;", 0, 0, 0);
+}
+
+void
+sqlite_handler::close ()
+{
+  cout << "sqlite_handler::close" << endl;
+  sqlite3_close (db);
+  db = NULL;
+  fn.clear ();
+}
+
+void
+sqlite_handler::print (std::ostream& os, bool pr_as_read_syntax = false)
+{
+  os << "This is class sqlite_handler" << endl;
+  os << "  database = '" << fn << "'" << endl;
+
 }
 
 sqlite_handler*

@@ -17,6 +17,7 @@
 #define _CL_SQLITE_HANDLER_
 
 #include <octave/oct.h>
+#include <sqlite3.h>
 #include <iostream>
 
 using namespace std;
@@ -41,10 +42,15 @@ public:
 
   ~sqlite_handler (void);
 
-  void print (std::ostream& os, bool pr_as_read_syntax) const;  //!< print itself on ostream
+  void print (std::ostream& os, bool pr_as_read_syntax);  //!< print itself on ostream
+  void open (string fn, bool create);
+  void close ();
 
 private:
   sqlite_handler (const sqlite_handler& m);
+
+  sqlite3 *db;
+  string fn;
 
   bool is_constant (void) const
   {

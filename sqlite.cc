@@ -51,3 +51,37 @@ Open database @var{filename}.\n\
     }
   return retval;
 }
+
+// PKG_ADD: autoload ("exec_sql", which ("sqlite.oct"));
+// PKG_DEL: autoload ("exec_sql", which ("sqlite.oct"), "remove");
+DEFUN_DLD(exec_sql, args, nargout,
+          "-*- texinfo -*-\n\
+@deftypefn {Loadable Function} {@var{result} =} exec_sql (@var{sqlite}, @var{sql}, [@var{bind}])\n\
+Execute @var{SQL} on @var{SQLITE} object.\n\
+\n\
+@var{bind} is a Mx1 cell array with parameters which are bind to the\n\
+prepared statement. It has to contain as may rows as the @var{sql} command\n\
+has parameters and the size of all parameters have to be equal.\n\
+@seealso{foobar}\n\
+@end deftypefn")
+{
+  octave_value_list retval;
+  int nargin = args.length ();
+
+  if (nargin < 2 || nargin > 3)
+    print_usage();
+
+  sqlite_handler* h = get_sqlite_handler_from_ov (args(0));
+  if (h)
+    {
+      string sql = args(1).string_value ();
+      Cell bind;
+
+      if (nargin > 2)
+        bind = args(2).cell_value ();
+
+      h->exec_sql (sql, bind);
+    }
+
+  return retval;
+}

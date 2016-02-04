@@ -45,6 +45,8 @@ public:
   void print (std::ostream& os, bool pr_as_read_syntax);  //!< print itself on ostream
   void open (string fn, bool create);
   void close ();
+  // FIMXE: return cell
+  void exec_sql (string sql, Cell bind);
 
 private:
   sqlite_handler (const sqlite_handler& m);

@@ -132,14 +132,22 @@ sqlite3_handler::exec_sql (string sql, Cell bind)
           rc = sqlite3_step (pStmt);
           //cout << "sqlite3_step returned " << rc << endl;
           if (rc == SQLITE_BUSY)
-            error ("The database is busy... (locked by another app)");
+            {
+              error ("The database is busy... (locked by another app)");
+            }
           else if (rc == SQLITE_DONE)
-            // sqlite3_step() has finished executing
-            cout << "SQLITE_DONE" << endl;
+            {
+              // sqlite3_step() has finished executing
+              cout << "SQLITE_DONE" << endl;
+            }
           else if (rc == SQLITE_ROW)
             {
               // sqlite3_step() has another row ready
+
+              //This routine returns 0 if pStmt is an SQL statement that does not return data
               cout << "SQLITE_ROW sqlite3_column_count()=" << sqlite3_column_count(pStmt) << endl;
+
+              cout << "SQLITE_ROW sqlite3_data_count()=" << sqlite3_data_count(pStmt) << endl;
 
               for (int cols=0; cols < sqlite3_column_count(pStmt); ++cols)
                 {
@@ -163,12 +171,12 @@ sqlite3_handler::exec_sql (string sql, Cell bind)
             error ("sqlite3_handler::exec_sql sqlite3_step failed: %i = %s", rc, sqlite3_errmsg (db));
 
           //call reset for multiple inserts, but not for queries
-            //sqlite3_reset (pStmt);
+          //sqlite3_reset (pStmt);
 
-            val_idx++;
+          val_idx++;
 
-      }
-    while (val_idx < num_values || (rc == SQLITE_ROW && val_idx<10));
+        }
+      while (val_idx < num_values || (rc == SQLITE_ROW && val_idx<10));
 
       sqlite3_finalize(pStmt);
     }
@@ -176,6 +184,19 @@ sqlite3_handler::exec_sql (string sql, Cell bind)
     error ("sqlite3_handler::exec_sql sqlite3_prepare_v2 failed: %s", sqlite3_errmsg (db));
 
   sqlite3_exec(db, "COMMIT;", 0, 0, 0);
+}
+
+void
+sqlite3_handler::testme ()
+{
+  Matrix a(3,2);
+  cout << a << endl;
+  //dim_vector dv = a.dims();
+  //cout << dv(1) << " " << dv(2) << endl;
+  cout << a.rows () << endl;
+  cout << a.columns () << endl;
+  a.assign (5,5,123,666)
+  cout << a << endl;
 }
 
 void

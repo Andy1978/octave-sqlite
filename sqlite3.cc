@@ -30,7 +30,10 @@ Open database @var{filename}.\n\
   int nargin = args.length ();
 
   if (nargin < 1 || nargin > 2)
-    print_usage();
+    {
+      print_usage();
+      return retval;
+    }
 
   if (!type_loaded)
     {
@@ -69,7 +72,10 @@ has parameters and the size of all parameters have to be equal.\n\
   int nargin = args.length ();
 
   if (nargin < 2 || nargin > 3)
-    print_usage();
+    {
+      print_usage();
+      return retval;
+    }
 
   sqlite3_handler* h = get_sqlite3_handler_from_ov (args(0));
   if (h)
@@ -82,6 +88,29 @@ has parameters and the size of all parameters have to be equal.\n\
 
       h->exec_sql (sql, bind);
     }
+
+  return retval;
+}
+
+// PKG_ADD: autoload ("testme", which ("sqlite3.oct"));
+// PKG_DEL: autoload ("testme", which ("sqlite3.oct"), "remove");
+DEFUN_DLD(testme, args, nargout,
+          "-*- texinfo -*-\n\
+@deftypefn {Loadable Function} testme ()\n\
+just for testing.\n\
+@end deftypefn")
+{
+  octave_value_list retval;
+  int nargin = args.length ();
+  if (nargin != 1)
+    {
+      print_usage();
+      return retval;
+    }
+
+  sqlite3_handler* h = get_sqlite3_handler_from_ov (args(0));
+  if (h)
+    h->testme ();
 
   return retval;
 }

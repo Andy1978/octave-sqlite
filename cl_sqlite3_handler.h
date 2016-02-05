@@ -47,6 +47,7 @@ public:
   void close ();
   // FIMXE: return cell
   void exec_sql (string sql, Cell bind);
+  void testme ();
 
 private:
   sqlite3_handler (const sqlite3_handler& m);

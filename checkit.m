@@ -1,4 +1,5 @@
 autoload ("exec_sql", which ("sqlite3.oct"));
+autoload ("testme", which ("sqlite3.oct"));
 
 a = sqlite3 ("test/foobar.db")
 
@@ -8,4 +9,6 @@ a = sqlite3 ("test/foobar.db")
 #exec_sql (a, "INSERT INTO foo1 (mybool, myint, mytext, myreal)\
 # VALUES (?1, ?2, ?3, ?4);", {1, 134, {"foo"}, 3*pi});
 
-exec_sql (a, "SELECT * from foo1;");
+#exec_sql (a, "SELECT * from foo1;");
+
+testme (a);

@@ -1,0 +1,8 @@
+autom4te.cache
+*.o
+*.oct
+*.db
+configure
+config.log
+config.status
+Makefile

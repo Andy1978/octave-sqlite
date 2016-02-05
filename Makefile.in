@@ -1,7 +1,7 @@
 .PHONY: all style clean distclean realclean
 
-OCT := sqlite.oct
-OBJ := cl_sqlite_handler.o
+OCT := sqlite3.oct
+OBJ := cl_sqlite3_handler.o
 
 MKOCTFILE  ?= mkoctfile
 MKOCTFLAGS ?= -Wall -v

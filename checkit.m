@@ -1,6 +1,6 @@
-autoload ("exec_sql", which ("sqlite.oct"));
+autoload ("exec_sql", which ("sqlite3.oct"));
 
-a = sqlite ("test/foobar.db")
+a = sqlite3 ("test/foobar.db")
 
 #exec_sql (a, "INSERT INTO foo1 (mybool, myint, mytext, myreal)\
 # VALUES (?1, ?2, ?3, ?4);", {[1 0], [333 444], {"hello", "world"}, [10.123, 11.234]});

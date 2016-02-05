@@ -13,15 +13,15 @@
 // You should have received a copy of the GNU General Public License along with
 // this program; if not, see <http://www.gnu.org/licenses/>.
 
-#include "cl_sqlite_handler.h"
+#include "cl_sqlite3_handler.h"
 
 static bool type_loaded = false;
 
-// PKG_ADD: autoload ("sqlite", which ("sqlite.oct"));
-// PKG_DEL: autoload ("sqlite", which ("sqlite.oct"), "remove");
-DEFUN_DLD(sqlite, args, nargout,
+// PKG_ADD: autoload ("sqlite3", which ("sqlite3.oct"));
+// PKG_DEL: autoload ("sqlite3", which ("sqlite3.oct"), "remove");
+DEFUN_DLD(sqlite3, args, nargout,
           "-*- texinfo -*-\n\
-@deftypefn {Loadable Function} {@var{sqlite} =} sqlite (@var{filename}, [@var{create}])\n\
+@deftypefn {Loadable Function} {@var{sqlite} =} sqlite3 (@var{filename}, [@var{create}])\n\
 Open database @var{filename}.\n\
 @seealso{foobar}\n\
 @end deftypefn")
@@ -34,7 +34,7 @@ Open database @var{filename}.\n\
 
   if (!type_loaded)
     {
-      sqlite_handler::register_type();
+      sqlite3_handler::register_type();
       type_loaded = true;
     }
   string fn = args(0).string_value ();
@@ -45,15 +45,15 @@ Open database @var{filename}.\n\
 
   if (! error_state)
     {
-      sqlite_handler *h = new sqlite_handler ();
+      sqlite3_handler *h = new sqlite3_handler ();
       h->open (fn, create);
       retval.append (octave_value (h));
     }
   return retval;
 }
 
-// PKG_ADD: autoload ("exec_sql", which ("sqlite.oct"));
-// PKG_DEL: autoload ("exec_sql", which ("sqlite.oct"), "remove");
+// PKG_ADD: autoload ("exec_sql", which ("sqlite3.oct"));
+// PKG_DEL: autoload ("exec_sql", which ("sqlite3.oct"), "remove");
 DEFUN_DLD(exec_sql, args, nargout,
           "-*- texinfo -*-\n\
 @deftypefn {Loadable Function} {@var{result} =} exec_sql (@var{sqlite}, @var{sql}, [@var{bind}])\n\
@@ -71,7 +71,7 @@ has parameters and the size of all parameters have to be equal.\n\
   if (nargin < 2 || nargin > 3)
     print_usage();
 
-  sqlite_handler* h = get_sqlite_handler_from_ov (args(0));
+  sqlite3_handler* h = get_sqlite3_handler_from_ov (args(0));
   if (h)
     {
       string sql = args(1).string_value ();

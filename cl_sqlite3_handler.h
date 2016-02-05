@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License along with
 // this program; if not, see <http://www.gnu.org/licenses/>.
 
-#ifndef _CL_SQLITE_HANDLER_
-#define _CL_SQLITE_HANDLER_
+#ifndef _CL_SQLITE3_HANDLER_
+#define _CL_SQLITE3_HANDLER_
 
 #include <octave/oct.h>
 #include <sqlite3.h>
@@ -22,25 +22,25 @@
 
 using namespace std;
 
-class sqlite_handler: public octave_base_value
+class sqlite3_handler: public octave_base_value
 {
 public:
 
-  sqlite_handler ();
+  sqlite3_handler ();
 
   octave_base_value *clone (void) const
   {
-    octave_stdout << "sqlite_handler clone" << endl;
-    return new sqlite_handler (*this);
+    octave_stdout << "sqlite3_handler clone" << endl;
+    return new sqlite3_handler (*this);
   }
 
   octave_base_value *empty_clone (void) const
   {
-    octave_stdout << "sqlite_handler empty_clone" << endl;
-    return new sqlite_handler ();
+    octave_stdout << "sqlite3_handler empty_clone" << endl;
+    return new sqlite3_handler ();
   }
 
-  ~sqlite_handler (void);
+  ~sqlite3_handler (void);
 
   void print (std::ostream& os, bool pr_as_read_syntax);  //!< print itself on ostream
   void open (string fn, bool create);
@@ -49,7 +49,7 @@ public:
   void exec_sql (string sql, Cell bind);
 
 private:
-  sqlite_handler (const sqlite_handler& m);
+  sqlite3_handler (const sqlite3_handler& m);
 
   sqlite3 *db;
   string fn;
@@ -66,6 +66,6 @@ private:
   DECLARE_OV_TYPEID_FUNCTIONS_AND_DATA
 };
 
-sqlite_handler* get_sqlite_handler_from_ov (octave_value ov);
+sqlite3_handler* get_sqlite3_handler_from_ov (octave_value ov);
 
 #endif

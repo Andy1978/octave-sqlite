@@ -13,35 +13,35 @@
 // You should have received a copy of the GNU General Public License along with
 // this program; if not, see <http://www.gnu.org/licenses/>.
 
-#include "cl_sqlite_handler.h"
+#include "cl_sqlite3_handler.h"
 
 
-DEFINE_OV_TYPEID_FUNCTIONS_AND_DATA(sqlite_handler, "sqlite_handler", "sqlite_handler");
+DEFINE_OV_TYPEID_FUNCTIONS_AND_DATA(sqlite3_handler, "sqlite3_handler", "sqlite3_handler");
 
-sqlite_handler::sqlite_handler ()
+sqlite3_handler::sqlite3_handler ()
   : octave_base_value()
 {
-  octave_stdout << "sqlite_handler C'Tor " << endl;
+  octave_stdout << "sqlite3_handler C'Tor " << endl;
 }
 
-sqlite_handler::sqlite_handler (const sqlite_handler& m)
+sqlite3_handler::sqlite3_handler (const sqlite3_handler& m)
   : octave_base_value()
 {
-  octave_stdout << "sqlite_handler: the copy constructor shouldn't be called" << std::endl;
+  octave_stdout << "sqlite3_handler: the copy constructor shouldn't be called" << std::endl;
 }
 
-sqlite_handler::~sqlite_handler ()
+sqlite3_handler::~sqlite3_handler ()
 {
-  octave_stdout << "sqlite_handler D'Tor " << endl;
+  octave_stdout << "sqlite3_handler D'Tor " << endl;
   if (db)
     close ();
 }
 
 void
-sqlite_handler::open (string fn, bool create)
+sqlite3_handler::open (string fn, bool create)
 {
 
-  cout << "sqlite_handler::open " << fn << " create=" << create << endl;
+  cout << "sqlite3_handler::open " << fn << " create=" << create << endl;
 
   int rc = sqlite3_open_v2 (fn.c_str (), &db,
                             SQLITE_OPEN_READWRITE
@@ -53,18 +53,18 @@ sqlite_handler::open (string fn, bool create)
 }
 
 void
-sqlite_handler::close ()
+sqlite3_handler::close ()
 {
-  cout << "sqlite_handler::close" << endl;
+  cout << "sqlite3_handler::close" << endl;
   sqlite3_close (db);
   db = NULL;
   fn.clear ();
 }
 
 void
-sqlite_handler::exec_sql (string sql, Cell bind)
+sqlite3_handler::exec_sql (string sql, Cell bind)
 {
-  cout << "sqlite_handler::exec_sql sql=" << sql << endl;
+  cout << "sqlite3_handler::exec_sql sql=" << sql << endl;
   Matrix s;
   for (octave_idx_type i = 0; i < bind.numel (); i++)
     {
@@ -111,7 +111,7 @@ sqlite_handler::exec_sql (string sql, Cell bind)
                   cout << "sqlite3_bind_double " << bind_idx + 1 << " to " << v << endl;
                   rc = sqlite3_bind_double (pStmt, bind_idx + 1, v);
                   if (rc != SQLITE_OK)
-                    error ("sqlite_handler::exec_sql sqlite3_bind_double failed: %i = %s", rc, sqlite3_errmsg (db));
+                    error ("sqlite3_handler::exec_sql sqlite3_bind_double failed: %i = %s", rc, sqlite3_errmsg (db));
                 }
               else if(tmp.is_cell ())
                 {
@@ -122,7 +122,7 @@ sqlite_handler::exec_sql (string sql, Cell bind)
                       cout << "sqlite3_bind_text " << bind_idx + 1 << " to '" << s << "'" << endl;
                       rc = sqlite3_bind_text (pStmt, bind_idx + 1, s.c_str (), -1, SQLITE_STATIC);
                       if (rc != SQLITE_OK)
-                        error ("sqlite_handler::exec_sql sqlite3_bind_text failed: %i = %s", rc, sqlite3_errmsg (db));
+                        error ("sqlite3_handler::exec_sql sqlite3_bind_text failed: %i = %s", rc, sqlite3_errmsg (db));
                     }
                   else
                     error ("Nested non string cells are not allowed");
@@ -160,9 +160,9 @@ sqlite_handler::exec_sql (string sql, Cell bind)
                    << " myreal=" << myreal << endl;
             }
           else
-            error ("sqlite_handler::exec_sql sqlite3_step failed: %i = %s", rc, sqlite3_errmsg (db));
+            error ("sqlite3_handler::exec_sql sqlite3_step failed: %i = %s", rc, sqlite3_errmsg (db));
 
-          call reset for multiple inserts, but not for queries
+          //call reset for multiple inserts, but not for queries
             //sqlite3_reset (pStmt);
 
             val_idx++;
@@ -173,37 +173,37 @@ sqlite_handler::exec_sql (string sql, Cell bind)
       sqlite3_finalize(pStmt);
     }
   else
-    error ("sqlite_handler::exec_sql sqlite3_prepare_v2 failed: %s", sqlite3_errmsg (db));
+    error ("sqlite3_handler::exec_sql sqlite3_prepare_v2 failed: %s", sqlite3_errmsg (db));
 
   sqlite3_exec(db, "COMMIT;", 0, 0, 0);
 }
 
 void
-sqlite_handler::print (std::ostream& os, bool pr_as_read_syntax = false)
+sqlite3_handler::print (std::ostream& os, bool pr_as_read_syntax = false)
 {
-  os << "This is class sqlite_handler" << endl;
+  os << "This is class sqlite3_handler" << endl;
   os << "  database = '" << fn << "'" << endl;
 
 }
 
-sqlite_handler*
-get_sqlite_handler_from_ov (octave_value ov)
+sqlite3_handler*
+get_sqlite3_handler_from_ov (octave_value ov)
 {
   static bool type_loaded = false;
   if (!type_loaded)
     {
-      sqlite_handler::register_type();
+      sqlite3_handler::register_type();
       type_loaded = true;
     }
 
-  if (ov.type_id() != sqlite_handler::static_type_id())
+  if (ov.type_id() != sqlite3_handler::static_type_id())
     {
-      error("get_sqlite_handler_from_ov: Not a valid sqlite_handler");
+      error("get_sqlite3_handler_from_ov: Not a valid sqlite3_handler");
       return 0;
     }
 
-  sqlite_handler* sqh = 0;
+  sqlite3_handler* sqh = 0;
   const octave_base_value& rep = ov.get_rep();
-  sqh = &((sqlite_handler &)rep);
+  sqh = &((sqlite3_handler &)rep);
   return sqh;
 }
